@@ -1,3 +1,4 @@
+
 import time
 import os
 import json
@@ -32,14 +33,15 @@ def jsonIn(file_dir):
 def main():
     while True:
         cmd = "scrapy crawl bilibiliOnline -t json -o ./data/%s.json"%(str(int(time.time())))
-        if(time.localtime().tm_hour>=6 and time.localtime().tm_hour<=23):
-            os.system(cmd)
-            time.sleep(300)
-        else:#这个地方我们的准备进行一次数据输入数据库
-            jsonIn("D:/Web_Objects/practice/react-redux-express/back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/data")
-            time.sleep(60*6)
+        #if(time.localtime().tm_hour>=6 and time.localtime().tm_hour<=23):
+        os.system(cmd)
+        time.sleep(200)
+        #else:
+         #   jsonIn("D:/Web_Objects/practice/react-redux-express/back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/data")
+         #   time.sleep(300)
 
 
-filename = jsonIn("D:/Web_Objects/practice/react-redux-express/back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/data")
-cmd = "mongoimport --db bilibili --collection onlines --file D:\\Web_Objects\\practice\\react-redux-express\\back-end\\scrapy_crawl\\bilibiliOnline\\bilibiliOnline\\%s"%(filename)
-os.system(cmd)
+main()
+#filename = jsonIn("D:/Web_Objects/practice/react-redux-express/back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/data")
+#cmd = "mongoimport --db bilibili --collection onlines --file D:\\Web_Objects\\practice\\react-redux-express\\back-end\\scrapy_crawl\\bilibiliOnline\\bilibiliOnline\\%s"%(filename)
+#os.system(cmd)

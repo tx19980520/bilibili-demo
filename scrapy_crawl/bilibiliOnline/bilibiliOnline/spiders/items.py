@@ -14,3 +14,7 @@ class BilibiliOnlineItem(scrapy.Item):
     online = scrapy.Field()
     newVideo = scrapy.Field()
     time = scrapy.Field()
+class TestItem(scrapy.Item):
+    # define the fields for your item here like:
+    total = scrapy.Field()
+    

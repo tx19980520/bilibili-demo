@@ -9,9 +9,9 @@ class WebkitDownloaderTest( object ):
         browser = spynner.Browser()
         browser.create_webview()
         browser.set_html_parser(pyquery.PyQuery)
-        browser.load(request.url, 20)
+        browser.load(request.url, 40)
         try:
-                browser.wait_load(10)
+                browser.wait_load(20)
         except:
                 pass
         string = browser.html

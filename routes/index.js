@@ -18,12 +18,13 @@ api.get('/getPage',function(req, res) {
     })
 });
 api.get("/getSearchPage",function(req, res) {
-    if(!res.query.word)
+    if(!req.query.word)
     {
-
+        //todo
     }
     else{
-        Anime.count({animeTitle:{$regex:".*"+word+".*","$options":"i"}},function(req, res) {
+        let word = req.query.word
+        Anime.count({animeTitle:{$regex:".*"+word+".*","$options":"i"}},function(err, result) {
             if(err) res.json({code:201,text:error});
             else if(result.length === 0)
             {
@@ -44,14 +45,14 @@ api.get('/',function(req, res) {
         animePicturePath:"full/sda.jpg"
     })
     anime.save()*/
-})
+});
 api.get("/getOnlineData", function (req, res) {
     let date =new Date()
     let today = date.getDate()
     let nowmonth = date.getMonth()+1
     let nowYear = date.getFullYear()
     Online.find({date:today,month:nowmonth,year:nowYear},(err,result)=>{
-        if(err || result.length == 0) res.json({code:201,text:err})
+        if(err || result.length === 0) res.json({code:201,text:err})
         else{
             let dataPoints = result[0]
             let total = {
@@ -74,14 +75,15 @@ api.get("/search",function(req,res){
     else
     {
         let word = req.query.word;
-        Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},(err,result)=>{
-            if(err)res.json({code:201,text:err});
-            else if(result.length === 1) res.json({code:200,text:"没有您需要的资料"})
+        Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},"-_id -animePictureUrl",(err,result)=>{
+            if(err){res.json({code:201,text:err});}
+            else if(result.length === 0) {res.json({code:200,text:"没有您需要的资料"});}
             else{
                 let total={
                     code:200,
                     list:result
-                }
+                };
+                res.json(total);
             }
         })
     }
@@ -89,20 +91,40 @@ api.get("/search",function(req,res){
 api.get('/getSearchList', function (req, res) {
     //这个地方后面会做成实时的一个反馈，但是现在是整个返回
     //并且现在暂时只有一个番剧的搜索
-    Anime.find({},"-_id animeTitle",(err,result)=>{
-        if(err) res.json({code:201,text:err})
-        else{
-            let tmp = result.map((anime)=>{
-                return anime.animeTitle
-            });
-            let nameList = Array.from(new Set(tmp))
-            let re = {
-                code:200,
-                list:nameL8ist
+    if(!req.query.word)
+    {
+        Anime.find({},"-_id animeTitle",(err,result)=>{
+            if(err) res.json({code:201,text:err})
+            else{
+                let tmp = result.map((anime)=>{
+                    return anime.animeTitle
+                });
+                let nameList = Array.from(new Set(tmp))
+                let re = {
+                    code:200,
+                    list:nameList
+                }
+                res.json(re)
             }
-            res.json(re)
-        }
-    });
+        });
+    }
+    else{
+        let word = req.query.word;
+        Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},"-_id animeTitle",(err,result)=>{
+            if(err) res.json({code:201,text:err})
+            else{
+                let tmp = result.map((anime)=>{
+                    return anime.animeTitle
+                });
+                let nameList = Array.from(new Set(tmp))
+                let re = {
+                    code:200,
+                    list:nameList
+                }
+                res.json(re)
+            }
+        });
+    }
 });
 api.get('/getAnime', function (req, res) {
     if(!req.query.page){
