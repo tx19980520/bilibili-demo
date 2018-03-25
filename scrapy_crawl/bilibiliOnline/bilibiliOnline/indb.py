@@ -3,9 +3,9 @@ import time
 import os
 import json
 def jsonIn(file_dir):
-    nowyear = time.localtime(time.time()-4*3600)[0]
-    nowmonth = time.localtime(time.time()-4*3600)[1]
-    nowdate = time.localtime(time.time()-4*3600)[2]
+    nowyear = time.localtime(time.time()-10*3600)[0]
+    nowmonth = time.localtime(time.time()-10*3600)[1]
+    nowdate = time.localtime(time.time()-10*3600)[2]
     todayData = {}
     todayData['year'] = nowyear
     todayData['month'] = nowmonth
@@ -44,14 +44,13 @@ def main():
         if time.localtime().tm_hour==1 and intodb:
             file = jsonIn("data")
             cmd = "mongoimport --db bilibili --collection onlines --file /usr/share/nginx/html/bilibili-demo-back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/%s"%(file)
-            try:
-                os.system(cmd)
-            except:
-                print "There is something wrong about import" 
+            os.system(cmd)
             intodb = False;
             hasinto = 1;
 
 
-main()
-#filename = jsonIn("D:/Web_Objects/practice/react-redux-express/back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/data")
-#cmd = "mongoimport --db bilibili --collection onlines --file D:\\Web_Objects\\practice\\react-redux-express\\back-end\\scrapy_crawl\\bilibiliOnline\\bilibiliOnline\\%s"%(#filename)
+#main()
+file = jsonIn("data")
+cmd = "mongoimport --db bilibili --collection onlines --file /usr/share/nginx/html/bilibili-demo-back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/%s"%(file)
+os.system(cmd)
+

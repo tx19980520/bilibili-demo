@@ -65,6 +65,6 @@ typings/
 db
 #picture
 public/full
-scrapy_crawl/bilibili/bilibili/images/full
 #scrawl data
+scrapy_crawl/bilibili/bilibili/images/full
 scrapy_crawl/bilibiliOnline/bilibiliOnline/data
