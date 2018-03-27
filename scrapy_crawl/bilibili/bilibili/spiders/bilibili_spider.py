@@ -5,7 +5,7 @@ import time
 from items import BilibiliItem,animeSpecificItem;
 
 start_urls = []
-for page in range(1,2):
+for page in range(1,153):
     url = "https://bangumi.bilibili.com/web_api/season/index_global?page=%d&page_size=20&version=0&is_finish=0&start_year=0&tag_id=&index_type=1&index_sort=0&quarter=0"%(page)
     start_urls.append(url)
 class BilibiliSpider(scrapy.Spider):
