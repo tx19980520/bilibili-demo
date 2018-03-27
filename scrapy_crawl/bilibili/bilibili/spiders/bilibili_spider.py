@@ -1,10 +1,11 @@
-# coding=utf-8
+# -*- coding: utf-8 -*-
 import scrapy
 import json
-from items import BilibiliItem;
+import time
+from items import BilibiliItem,animeSpecificItem;
 
 start_urls = []
-for page in range(1,152):
+for page in range(1,2):
     url = "https://bangumi.bilibili.com/web_api/season/index_global?page=%d&page_size=20&version=0&is_finish=0&start_year=0&tag_id=&index_type=1&index_sort=0&quarter=0"%(page)
     start_urls.append(url)
 class BilibiliSpider(scrapy.Spider):
@@ -21,5 +22,22 @@ class BilibiliSpider(scrapy.Spider):
             item["animeTitle"] = anime["title"]
             item["animePictureUrl"] = anime["cover"]
             item['fans'] = anime['favorites']
-	    item['animeFinished'] = anime['is_finish']
-            yield item;
+            item['animeFinished'] = anime['is_finish']
+            now = int(time.time())
+            url = "https://bangumi.bilibili.com/jsonp/seasoninfo/%d.ver?callback=seasonListCallback&jsonp=jsonp&_=%d"%(int(item["animeId"].encode('utf-8')),now)
+            yield item
+            yield scrapy.Request(url,callback = self.sub_parse)
+
+    def sub_parse(self,response):
+        body =json.loads(response.body[19:-2])
+        result = body['result']
+        item = animeSpecificItem()
+        item['actor'] = result["actor"]
+        item['evaluate'] = result['evaluate']
+        item['coins'] = result['coins']
+        item['episodes'] = result['episodes']
+        item['rating'] = result['media']['rating']
+        item['tags'] = [];
+        for i in range(0,len(result['tags'])):
+            item['tags'].append(result['tags'][i]['tag_name'])
+        yield item

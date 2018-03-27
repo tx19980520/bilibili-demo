@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import os
 # Scrapy settings for bilibili project
 #
 # For simplicity, this file contains only settings considered important or
@@ -13,8 +13,9 @@ BOT_NAME = 'bilibili'
 FEED_EXPORT_ENCODING = 'utf-8'
 SPIDER_MODULES = ['bilibili.spiders']
 NEWSPIDER_MODULE = 'bilibili.spiders'
-ITEM_PIPELINES = { 'bilibili.pipelines.bilibiliImagesPipeline': 1}
-IMAGES_STORE = 'images'   #存储图片的文件夹位置
+ITEM_PIPELINES = { 'bilibili.pipelines.bilibiliImagesPipeline': 2,"bilibili.pipelines.bilibiliSpecificPipeline":1}
+project_dir = os.path.dirname(__file__)
+IMAGES_STORE = os.path.join(project_dir, 'images')   #存储图片的文件夹位置
 FEED_FORMAT="json"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'bilibili (+http://www.yourdomain.com)'

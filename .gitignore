@@ -69,3 +69,5 @@ public/full
 #scrawl data
 scrapy_crawl/bilibili/bilibili/images/full
 scrapy_crawl/bilibiliOnline/bilibiliOnline/data
+#for pyc
+*.pyc
