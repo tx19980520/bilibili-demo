@@ -3,9 +3,9 @@ import time
 import os
 import json
 def jsonIn(file_dir):
-    nowyear = time.localtime(time.time()-4*3600)[0]
-    nowmonth = time.localtime(time.time()-4*3600)[1]
-    nowdate = time.localtime(time.time()-4*3600)[2]
+    nowyear = time.localtime(time.time()-3*3600)[0]
+    nowmonth = time.localtime(time.time()-3*3600)[1]
+    nowdate = time.localtime(time.time()-3*3600)[2]
     todayData = {}
     todayData['year'] = nowyear
     todayData['month'] = nowmonth
@@ -17,8 +17,14 @@ def jsonIn(file_dir):
         for file in files:
             if(file == "image.py"):
                 continue;
-            f= open("data/"+file,'r');
-            data=json.loads(f.read())[0]
+            print file
+            f= open("./data/"+file,'r');
+            try:
+                data=json.loads(f.read())[0]
+            except ValueError:
+                f.close()
+                os.remove("./data/"+file)
+                continue
             if time.localtime(data['time'])[0] == nowyear and time.localtime(data['time'])[1] == nowmonth and time.localtime(data['time'])[2] == nowdate:
                 point = {}
                 y1 = int(data['online'])
@@ -27,7 +33,9 @@ def jsonIn(file_dir):
                 point['y1'] = y1/10000.0
                 point['y2'] = y2/10000.0
                 todayData['data'].append(point)
+                os.remove("./data/"+file)
     dayfile.write(json.dumps(todayData))
+    dayfile.close()
     return filename
 
 def main():
@@ -38,18 +46,16 @@ def main():
             hasinto = 1;
         cmd = "scrapy crawl bilibiliOnline -t json -o ./data/%s.json"%(str(int(time.time())))
         os.system(cmd)
-        if(time.localtime().tm_hour==1 and hasinto == 0):
+        if(time.localtime().tm_hour==1 and hasinto == 1):
             intodb = True;
-        time.sleep(200)
-        if time.localtime().tm_hour==1 and intodb:
-            file = jsonIn("data")
-            cmd = "mongoimport --db bilibili --collection onlines --file /usr/share/nginx/html/bilibili-demo-back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/%s"%(file)
-            try:
-                os.system(cmd)
-            except:
-                print "There is something wrong about import" 
+        time.sleep(100)
+        if intodb:
+            modifyFile = jsonIn("./data")
+            cmd = "mongoimport --db bilibili --collection onlines --file /usr/share/nginx/html/bilibili-demo-back-end/bilibili-demo-back-end/scrapy_crawl/bilibiliOnline/bilibiliOnline/%s"%(modifyFile)
+            os.system(cmd)
+             
             intodb = False;
-            hasinto = 1;
+            hasinto = 0;
 
 
 main()
