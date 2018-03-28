@@ -36,8 +36,16 @@ class BilibiliSpider(scrapy.Spider):
         item['evaluate'] = result['evaluate']
         item['coins'] = result['coins']
         item['episodes'] = result['episodes']
-        item['rating'] = result['media']['rating']
-        item['tags'] = [];
-        for i in range(0,len(result['tags'])):
-            item['tags'].append(result['tags'][i]['tag_name'])
+        try:
+            item['rating'] = result['media']['rating']
+        except:
+            item['rating'] = {}
+            pass
+        try:
+            item['tags'] = []
+            for i in range(0,len(result['tags'])):
+                item['tags'].append(result['tags'][i]['tag_name'])
+        except:
+            item['tags'] = []
+            pass
         yield item
