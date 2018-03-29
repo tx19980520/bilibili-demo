@@ -22,7 +22,8 @@ class bilibiliImagesPipeline(ImagesPipeline):
         fileBilibili.close()
     def get_media_requests(self, item, info):
         if isinstance(item,Items.BilibiliItem):
-            image_url = item['animePictureUrl'];
+            image_url = item['animePictureUrl']
+            print image_url
             yield scrapy.Request(image_url)
     def item_completed(self, results, item, info):#这个放在后面
         if isinstance(item,Items.BilibiliItem):

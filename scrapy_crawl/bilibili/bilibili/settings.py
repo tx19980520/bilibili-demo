@@ -19,7 +19,7 @@ IMAGES_STORE = os.path.join(project_dir, 'images')   #存储图片的文件夹�
 FEED_FORMAT="json"
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'bilibili (+http://www.yourdomain.com)'
-
+AUTOTHROTTLE_START_DELAY = 5
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 

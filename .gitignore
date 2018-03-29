@@ -71,3 +71,6 @@ scrapy_crawl/bilibili/bilibili/images/full
 scrapy_crawl/bilibiliOnline/bilibiliOnline/data
 #for pyc
 *.pyc
+scrapy_crawl/bilibili/bilibili.json
+scrapy_crawl/bilibili/bilibili/data/specific.json
+scrapy_crawl/bilibili/bilibili/data/bilibili.json
