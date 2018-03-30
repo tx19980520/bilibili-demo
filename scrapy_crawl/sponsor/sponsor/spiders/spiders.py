@@ -47,7 +47,7 @@ class BilibiliSponsorSpider(scrapy.Spider):
             item['vip'] = user['vip']
             item['likevideo'] = []
             next = "https://space.bilibili.com/ajax/Bangumi/getList?mid=%s&page=1"%(user['uid'])
-            yield scrapy.Request(next,meta={"item":item},callback=self.user_detail)
+            yield scrapy.Request(next,meta={"item":item},dont_filter=True,callback=self.user_detail)
 
     def user_detail(self,response):
         body = json.loads(response.body)
@@ -56,7 +56,7 @@ class BilibiliSponsorSpider(scrapy.Spider):
             data = body['data']
             for i in range(2,int(data['pages'])+1):
                 next = "https://space.bilibili.com/ajax/Bangumi/getList?mid=%s&page=%d"%(response.meta['item']['uid'],i)
-                yield scrapy.Request(next,callback=self.anime_detail,meta={"item":response.meta['item'],"page":i})#这个地方把某个具体的人的追番拿来继续分页得到
+                yield scrapy.Request(next,callback=self.anime_detail,dont_filter=True,meta={"item":response.meta['item'],"page":i})#这个地方把某个具体的人的追番拿来继续分页得到
                 time.sleep(0.05)
     def anime_detail(self,response):
         anime=json.loads(response.body)
