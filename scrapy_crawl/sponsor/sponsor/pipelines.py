@@ -9,9 +9,11 @@ from scrapy.pipelines.images import ImagesPipeline
 from scrapy.exceptions import DropItem
 import spiders.items as Items
 from scrapy.exporters import JsonLinesItemExporter
+from scrapy.exceptions import CloseSpider
 class SponsorPipeline(object):
     def __init__(self):
-        self.sponsorFile = open("./data/sponsor2.json","wb")
+        self.fuck=False
+        self.sponsorFile = open("./data/sponsornew.json","wb")
         self.exporter = JsonLinesItemExporter(self.sponsorFile,encoding="utf-8",ensure_ascii=False)
         self.exporter.start_exporting()
         self.uset = set();
