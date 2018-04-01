@@ -37,7 +37,7 @@ class AlluserSpider(scrapy.Spider):
         self.common_url="https://bangumi.bilibili.com/sponsor/rankweb/get_sponsor_total"
     def start_requests(self):#这个地方把所有的投喂榜拿出来
         for id in range(10000000,10927400):
-            time.sleep(0.5)
+            time.sleep(1)
             nowbody = "mid=%d&csrf=09bb994401fb79745061fbc36fb73e46"%(id)
             yield scrapy.Request(self.get_user_url,method="POST",headers=self.secondheaders,body=nowbody,meta={"id":id},callback=self.parse)
     def parse(self,response):
