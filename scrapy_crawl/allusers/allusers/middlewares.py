@@ -4,9 +4,31 @@
 #
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-
+import scrapy
 from scrapy import signals
+from scrapy.downloadermiddlewares.useragent import UserAgentMiddleware
+import random
 
+
+class MyUserAgentMiddleware(UserAgentMiddleware):
+    '''
+    设置User-Agent
+    '''
+
+    def __init__(self, user_agent):
+        #super(UserAgentMiddleware).__init__();
+        self.user_agent = user_agent
+
+    @classmethod
+    def from_crawler(cls, crawler):
+        return cls(
+            user_agent=crawler.settings.get('MY_USER_AGENT')
+        )
+
+    def process_request(self, request, spider):
+        agent = random.choice(self.user_agent)
+        request.headers['User-Agent'] = agent
+        request.meta['proxy'] = "http://106.15.225.249:8000"
 
 class AllusersSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
