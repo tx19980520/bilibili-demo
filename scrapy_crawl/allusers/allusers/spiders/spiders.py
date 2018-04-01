@@ -37,9 +37,9 @@ class AlluserSpider(scrapy.Spider):
         self.common_url="https://bangumi.bilibili.com/sponsor/rankweb/get_sponsor_total"
     def start_requests(self):#这个地方把所有的投喂榜拿出来
         for id in range(10000000,10927400):
+            time.sleep(0.5)
             nowbody = "mid=%d&csrf=09bb994401fb79745061fbc36fb73e46"%(id)
             yield scrapy.Request(self.get_user_url,method="POST",headers=self.secondheaders,body=nowbody,meta={"id":id},callback=self.parse)
-
     def parse(self,response):
         result = json.loads(response.body)['data']
         if(isinstance(result,dict)):
@@ -62,7 +62,6 @@ class AlluserSpider(scrapy.Spider):
                 for i in range(2,int(data['pages'])+1):
                     next = "https://space.bilibili.com/ajax/Bangumi/getList?mid=%s&page=%d"%(response.meta['item']['uid'],i)
                     yield scrapy.Request(next,callback=self.anime_detail,meta={"item":response.meta['item'],"page":i})#这个地方把某个具体的人的追番拿来继续分页得到
-                    time.sleep(0.05)
     def anime_detail(self,response):
         anime=json.loads(response.body)
         data = anime['data']
