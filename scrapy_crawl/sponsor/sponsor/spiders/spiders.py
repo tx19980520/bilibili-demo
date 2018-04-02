@@ -51,18 +51,16 @@ class BilibiliSponsorSpider(scrapy.Spider):
             yield scrapy.Request(review,method="GET",callback=self.review_parse)
 
     def review_parse(self,response):#for the user list
-        print "review_parse"
         body = json.loads(response.body)
         if True:
             result = body['result'];
-            #for review in result['list']:
-            #uid = review['author']['mid']
-            reviewbody = "mid=17212494&csrf=09bb994401fb79745061fbc36fb73e46"#"mid=%d&csrf=09bb994401fb79745061fbc36fb73e46"%(uid)
-            yield scrapy.Request(self.get_user_url,method="POST",meta={"id":"17212494"},headers=self.secondheaders,body=reviewbody,callback=self.get_user)
+            for review in result['list']:
+                uid = review['author']['mid']
+                reviewbody = "mid=%d&csrf=09bb994401fb79745061fbc36fb73e46"%(uid)
+                yield scrapy.Request(self.get_user_url,method="POST",meta={"id":uid},headers=self.secondheaders,body=reviewbody,callback=self.get_user)
                 #next = "https://space.bilibili.com/ajax/Bangumi/getList?mid=%s&page=1"%(uid)
                 #yield scrapy.Request(next,meta={"id":uid},callback=self.review_getuser)
     def get_user(self,response):
-        print "get_user"
         body = json.loads(response.body)
         if True:
             data = body['data']
@@ -77,7 +75,6 @@ class BilibiliSponsorSpider(scrapy.Spider):
         userList = result['list']
         for user in userList:
             item = Item.BilibiliUserItem()
-            #item['__v'] = 0
             item['uid'] = user['uid']
             item['vip'] = user['vip']
             item['likevideo'] = []

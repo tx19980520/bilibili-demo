@@ -37,7 +37,7 @@ class AlluserSpider(scrapy.Spider):
     #"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
     "X-Requested-With": "XMLHttpRequest"
         }
-            time.sleep(0.75)
+            time.sleep(1)
             nowbody = "mid=%d&csrf=09bb994401fb79745061fbc36fb73e46"%(id)
             yield scrapy.Request(self.get_user_url,method="POST",headers=secondheaders,body=nowbody,meta={"id":id},callback=self.parse)
     def parse(self,response):
