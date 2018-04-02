@@ -75,3 +75,4 @@ scrapy_crawl/bilibili/bilibili.json
 scrapy_crawl/bilibili/bilibili/data/specific.json
 scrapy_crawl/bilibili/bilibili/data/bilibili.json
 scrapy_crawl/allusers/allusers/data/alluser.json
+scrapy_crawl/sponsor/sponsor/data/sponsortest.json
