@@ -37,18 +37,21 @@ class AlluserSpider(scrapy.Spider):
     #"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
     "X-Requested-With": "XMLHttpRequest"
         }
-            time.sleep(1)
+            time.sleep(0.9)
             nowbody = "mid=%d&csrf=09bb994401fb79745061fbc36fb73e46"%(id)
             yield scrapy.Request(self.get_user_url,method="POST",headers=secondheaders,body=nowbody,meta={"id":id},callback=self.parse)
     def parse(self,response):
-        result = json.loads(response.body)['data']
-        if(isinstance(result,dict)):
-            item = Item.AllusersItem()
-            item['uid'] = result['mid']
-            item['vip'] = result['vip']
-            item['likevideo'] = []
-            next = "https://space.bilibili.com/ajax/Bangumi/getList?mid=%s&page=1"%(result['mid'])
-            yield scrapy.Request(next,meta={"item":item},callback=self.user_detail)
+        if response.status == 200:
+            result = json.loads(response.body)['data']
+            if(isinstance(result,dict)):
+                item = Item.AllusersItem()
+                item['uid'] = result['mid']
+                item['vip'] = result['vip']
+                item['likevideo'] = []
+                next = "https://space.bilibili.com/ajax/Bangumi/getList?mid=%s&page=1"%(result['mid'])
+                yield scrapy.Request(next,meta={"item":item},callback=self.user_detail)
+        elif response.status == 403:
+            time.sleep(100);
     def user_detail(self,response):
         body = json.loads(response.body)
         status = body['status']

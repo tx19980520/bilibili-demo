@@ -16,7 +16,6 @@ NEWSPIDER_MODULE = 'sponsor.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'sponsor (+http://www.yourdomain.com)'
-
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 

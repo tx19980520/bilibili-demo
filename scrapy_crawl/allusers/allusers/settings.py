@@ -14,7 +14,7 @@ BOT_NAME = 'allusers'
 SPIDER_MODULES = ['allusers.spiders']
 NEWSPIDER_MODULE = 'allusers.spiders'
 
-
+HTTPERROR_ALLOWED_CODES = [403]#to check the 403 code error
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'allusers (+http://www.yourdomain.com)'
 

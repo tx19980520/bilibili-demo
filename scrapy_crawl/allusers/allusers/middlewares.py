@@ -28,7 +28,8 @@ class MyUserAgentMiddleware(UserAgentMiddleware):
     def process_request(self, request, spider):
         agent = random.choice(self.user_agent)
         request.headers['User-Agent'] = agent
-        request.meta['proxy'] = "http://106.15.225.249:8000"
+        port = random.randomint(1,8000)
+        request.meta['proxy'] = "http://106.15.225.249:%d"%(port)
 
 class AllusersSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
