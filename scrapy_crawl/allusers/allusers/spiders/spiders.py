@@ -23,7 +23,7 @@ class AlluserSpider(scrapy.Spider):
         self.get_user_url = "https://space.bilibili.com/ajax/member/GetInfo"
         self.common_url="https://bangumi.bilibili.com/sponsor/rankweb/get_sponsor_total"
     def start_requests(self):#这个地方把所有的投喂榜拿出来
-        for id in range(10000000,10927400):
+        for id in range(10927401,11000000):
             secondheaders={
         "Accept": "*/*",
     "Accept-Encoding": "gzip, deflate, br",
@@ -37,7 +37,7 @@ class AlluserSpider(scrapy.Spider):
     #"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36",
     "X-Requested-With": "XMLHttpRequest"
         }
-            time.sleep(0.9)
+            time.sleep(1)
             nowbody = "mid=%d&csrf=09bb994401fb79745061fbc36fb73e46"%(id)
             yield scrapy.Request(self.get_user_url,method="POST",headers=secondheaders,body=nowbody,meta={"id":id},callback=self.parse)
     def parse(self,response):
@@ -51,7 +51,7 @@ class AlluserSpider(scrapy.Spider):
                 next = "https://space.bilibili.com/ajax/Bangumi/getList?mid=%s&page=1"%(result['mid'])
                 yield scrapy.Request(next,meta={"item":item},callback=self.user_detail)
         elif response.status == 403:
-            time.sleep(100);
+            time.sleep(123);
     def user_detail(self,response):
         body = json.loads(response.body)
         status = body['status']
