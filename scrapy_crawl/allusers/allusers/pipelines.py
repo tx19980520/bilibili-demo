@@ -12,7 +12,7 @@ from scrapy.exporters import JsonLinesItemExporter
 from scrapy.exceptions import CloseSpider
 class AllusersPipeline(object):
     def __init__(self):
-        self.sponsorFile = open("./data/alluserlocal.json","wb")
+        self.sponsorFile = open("./data/alluserlocal.json","a")
         self.exporter = JsonLinesItemExporter(self.sponsorFile,encoding="utf-8",ensure_ascii=False)
         self.exporter.start_exporting()
     def process_item(self, item, spider):

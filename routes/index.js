@@ -4,7 +4,7 @@ var api = express.Router();
 var mongoose =require(".././config/mongoose.js");
 var db = mongoose();
 var Anime = require('.././models/Anime.js');// 引入模型
-var Online = require('.././models/Online.js')
+var Online = require('.././models/Online.js');
 api.get('/getPage',function(req, res) {
     Anime.count({},(err,result)=>{
         if(err)return{code:201,text:"返回页数失败"};

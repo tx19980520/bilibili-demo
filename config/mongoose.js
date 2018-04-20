@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 const config = require('./config');
+const fs = require('fs');
+const readline = require('readline');
+var User = require('../models/User.js');
+var Anime = require("../models/Anime.js");
+var AnimeSpecific = require('../models/animeSpecific.js');
 module.exports = ()=>{
     //  mongoose.Promise = global.Promise;//如果有promise的问题，可以用这个试试
     mongoose.connect(config.mongodb);//连接mongodb数据库
@@ -8,6 +13,40 @@ module.exports = ()=>{
     db.on('error', console.error.bind(console, '连接错误：'));
     db.once('open', (callback) => {
         console.log('MongoDB连接成功！！');
+        //开始设计导入之前的数据
+        /*
+        let fRead = fs.createReadStream("./scrapy_crawl/bilibili/bilibili/data/bilibili.json");
+        const rl = readline.createInterface({
+            input: fRead
+        });
+        rl.on('line', (line) => {
+            //我们在这里进行文件
+            let data = JSON.parse(line);
+            data['_id'] = parseInt(data['animeId']);
+            data['animeSpecific'] = data['_id'];
+            let spec = new Anime(data);
+            spec.save();
+        });
+        rl.on('close', () => {
+            console.log("数据导入完成");
+        });
+        //上述测试是成功的，下面代码的逻辑是没错的，错的是我们的主键的设定
+        /*
+
+        User.findOne({uid: "10935167"}).populate('likevideo').exec(function (err, user) {
+            if (err) console.log(err);
+            console.log('The author is %s', user);
+            // prints "The author is Ian Fleming"
+        });
+        下述代码没有问题
+        User.findOne({uid: "10935167"}).populate('likevideo').exec(function (err, user) {
+            if (err) console.log(err);
+            console.log('The author is %s', user.likevideo[0]);
+        });*/
+        Anime.findOne({_id:2661}).populate('animeSpecific').exec(function (err, anime) {
+            if (err) console.log(err);
+            console.log('The author is %s', anime.animeSpecific);
+        });
+        return db;
     });
-    return db;
 };

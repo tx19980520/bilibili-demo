@@ -26,3 +26,4 @@ class animeSpecificItem(scrapy.Item):
     episodes = scrapy.Field()
     rating = scrapy.Field()
     tags = scrapy.Field()
+    animeId = scrapy.Field()

@@ -29,8 +29,8 @@ class BilibiliSpider(scrapy.Spider):
             item['animeFinished'] = anime['is_finish']
             now = int(time.time())
             url = "https://bangumi.bilibili.com/jsonp/seasoninfo/%d.ver?callback=seasonListCallback&jsonp=jsonp&_=%d"%(int(item["animeId"].encode('utf-8')),now)
-            yield item
-            yield scrapy.Request(url,callback = self.sub_parse)
+            #yield item
+            yield scrapy.Request(url,callback = self.sub_parse,meta={'id':int(item["animeId"].encode('utf-8'))})
 
     def sub_parse(self,response):
         body =json.loads(response.body[19:-2])
@@ -40,6 +40,7 @@ class BilibiliSpider(scrapy.Spider):
         item['evaluate'] = result['evaluate']
         item['coins'] = result['coins']
         item['episodes'] = result['episodes']
+        item['animeId'] = response.meta['id']
         try:
             item['rating'] = result['media']['rating']
         except:
