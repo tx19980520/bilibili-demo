@@ -13,7 +13,7 @@ from scrapy.exporters import JsonLinesItemExporter
 #class BilibiliPipeline(object):
 #    def process_item(self, item, spider):
 #        return item
-fileBilibili = open("./data/bilibili2.json",'a')
+fileBilibili = open("./data/bilibili2.json",'wb')
 exporterBilibili = JsonLinesItemExporter(fileBilibili,encoding="utf-8",ensure_ascii=False)
 exporterBilibili.start_exporting()
 class bilibiliImagesPipeline(ImagesPipeline):
@@ -35,7 +35,7 @@ class bilibiliImagesPipeline(ImagesPipeline):
         return item
 class bilibiliSpecificPipeline(object):
     def __init__(self):
-        self.fileSpecific = open('./data/specific2.json','a')
+        self.fileSpecific = open('./data/specific2.json','wb')
         self.exporterSpecific = JsonLinesItemExporter(self.fileSpecific,encoding="utf-8",ensure_ascii=False)
         self.exporterSpecific.start_exporting()
     def process_item(self,item,spider):

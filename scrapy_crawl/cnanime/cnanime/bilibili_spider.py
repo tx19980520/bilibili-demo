@@ -9,9 +9,9 @@ start_urls = []
 '''
 for bilibili specific and bilibili simple data;
 '''
-#for page in range(1,153):
-url = "https://bangumi.bilibili.com/web_api/season/index_global?page=%d&page_size=20&version=0&is_finish=0&start_year=0&tag_id=&index_type=1&index_sort=0&quarter=0"%(152)
-start_urls.append(url)
+for page in range(1,21):
+    url = "http://bangumi.bilibili.com/web_api/season/index_cn?page=%d&page_size=20&version=0&is_finish=0&start_year=0&tag_id=&index_type=1&index_sort=0&quarter=0"%(page)
+    start_urls.append(url)
 class BilibiliSpider(scrapy.Spider):
     name = "bilibili"
     allowed_domains = ["bilibili.com"]

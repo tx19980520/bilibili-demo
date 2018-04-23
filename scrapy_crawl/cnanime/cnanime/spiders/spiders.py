@@ -9,11 +9,11 @@ start_urls = []
 '''
 for bilibili specific and bilibili simple data;
 '''
-#for page in range(1,153):
-url = "https://bangumi.bilibili.com/web_api/season/index_global?page=%d&page_size=20&version=0&is_finish=0&start_year=0&tag_id=&index_type=1&index_sort=0&quarter=0"%(152)
-start_urls.append(url)
-class BilibiliSpider(scrapy.Spider):
-    name = "bilibili"
+for page in range(1,21):
+    url = "http://bangumi.bilibili.com/web_api/season/index_cn?page=%d&page_size=20&version=0&is_finish=0&start_year=0&tag_id=&index_type=1&index_sort=0&quarter=0"%(page)
+    start_urls.append(url)
+class CnanimeSpider(scrapy.Spider):
+    name = "cnanime"
     allowed_domains = ["bilibili.com"]
     start_urls=start_urls
     def parse(self, response):
@@ -29,7 +29,7 @@ class BilibiliSpider(scrapy.Spider):
             item['animeFinished'] = anime['is_finish']
             now = int(time.time())
             url = "https://bangumi.bilibili.com/jsonp/seasoninfo/%d.ver?callback=seasonListCallback&jsonp=jsonp&_=%d"%(int(item["animeId"].encode('utf-8')),now)
-            #yield item
+            yield item
             yield scrapy.Request(url,callback = self.sub_parse,meta={'id':int(item["animeId"].encode('utf-8'))})
 
     def sub_parse(self,response):

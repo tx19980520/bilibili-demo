@@ -68,6 +68,7 @@ db
 public/full
 #scrawl data
 scrapy_crawl/bilibili/bilibili/images/full
+scrapy_crawl/cnanime/cnanime/images/full
 scrapy_crawl/bilibiliOnline/bilibiliOnline/data
 #for pyc
 *.pyc
@@ -76,3 +77,5 @@ scrapy_crawl/bilibili/bilibili/data/*.json
 scrapy_crawl/bilibili/bilibili/data/*.json
 scrapy_crawl/allusers/allusers/data/*.json
 scrapy_crawl/sponsor/sponsor/data/*.json
+scrapy_crawl/cnanime/cnanime/data/*.json
+*.jpg
