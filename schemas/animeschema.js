@@ -8,7 +8,7 @@ var animeSchema = new Schema({
     animeTitle:String,
     animeId:Number,
     animeFinished:Number,
-    animeSpecific:{type:Number,ref:"animeSpecific"}
+    animeSpecific:{type:Number,ref:"AnimeSpecific"}
 
 });
 module.exports = animeSchema;
