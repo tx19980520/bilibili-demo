@@ -29,7 +29,7 @@ var AnimeSpecific = require('../models/animeSpecific.js');
     api.get("/api/getSearchPage",function(req, res) {
         if(!req.query.word)
         {
-            //todo
+            //todo 返回一个所谓的推荐队列
         }
         else{
             let word = req.query.word;
@@ -84,9 +84,9 @@ var AnimeSpecific = require('../models/animeSpecific.js');
         else
         {
             let word = req.query.word;
-            Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},"-_id -animePictureUrl",(err,result)=>{
+            Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},(err,result)=>{
                 if(err){res.json({code:201,text:err});}
-                else if(result.length === 0) {res.json({code:200,text:"没有您需要的资料"});}
+                else if(result.length === 0) {res.json({code:202,text:"没有您需要的资料"});}
                 else{
                     let total={
                         code:200,
@@ -102,7 +102,7 @@ var AnimeSpecific = require('../models/animeSpecific.js');
         //并且现在暂时只有一个番剧的搜索
         if(!req.query.word)
         {
-            Anime.find({},"-_id animeTitle",(err,result)=>{
+            Anime.find({},(err,result)=>{
                 if(err) res.json({code:201,text:err})
                 else{
                     let tmp = result.map((anime)=>{
@@ -111,7 +111,7 @@ var AnimeSpecific = require('../models/animeSpecific.js');
                     let nameList = Array.from(new Set(tmp))
                     let re = {
                         code:200,
-                        list:nameList
+                        searchlist:nameList,
                     }
                     res.json(re)
                 }
@@ -119,7 +119,8 @@ var AnimeSpecific = require('../models/animeSpecific.js');
         }
         else{
             let word = req.query.word;
-            Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},"-_id animeTitle",(err,result)=>{
+			let page = req.query.page;
+            Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},(err,result)=>{
                 if(err) res.json({code:201,text:err})
                 else{
                     let tmp = result.map((anime)=>{
@@ -128,8 +129,10 @@ var AnimeSpecific = require('../models/animeSpecific.js');
                     let nameList = Array.from(new Set(tmp))
                     let re = {
                         code:200,
-                        list:nameList
-                    }
+                        searchList:nameList.slice((page-1)*20,page*20),
+						animeList:result.slice((page-1)*20,page*20),
+						totalPage:Math.ceil(nameList.length/20)
+						}
                     res.json(re)
                 }
             });
