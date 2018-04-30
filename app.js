@@ -43,11 +43,12 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
-
+var debug = require('debug')('my-application'); // debug模块
 var server = app.listen(8080, function () {
     var host = server.address().address;
     var port = server.address().port;
-
+	console.log("fuck");
+	debug('Express server listening on port ' + port);
     console.log('Example app listening at http://%s:%s', host, port);
 });
 
