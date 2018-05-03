@@ -5,6 +5,10 @@ var db = mongoose();
 var Anime = require('../models/Anime.js');// 引入模型
 var Online = require('../models/Online.js');
 var AnimeSpecific = require('../models/animeSpecific.js');
+	api.post("/api/postRecommend",function(req,res){
+		console.log(req.body);
+		res.json({code:200,text:"get"});
+	});
     api.get("/api/AnimeSpecific/:animeId",function(req,res){
         let animeId = req.params.animeId;
         Anime.findOne({_id:animeId}).populate('animeSpecific').exec(function (err, anime) {
@@ -117,6 +121,25 @@ var AnimeSpecific = require('../models/animeSpecific.js');
                 }
             });
         }
+		else if(!req.query.page){
+			let word = req.query.word;
+            Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},(err,result)=>{
+                if(err) res.json({code:201,text:err})
+                else{
+                    let tmp = result.map((anime)=>{
+                        return anime.animeTitle
+                    });
+					console.log(tmp)
+                    let nameList = Array.from(new Set(tmp))
+                    let re = {
+                        code:200,
+                        searchlist:nameList
+						}
+                    res.json(re)
+                }
+            });
+		}
+			
         else{
             let word = req.query.word;
 			let page = req.query.page;
