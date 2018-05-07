@@ -1,0 +1,267 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="icon" sizes="any" mask href="http://www.cqdulux.cn/media/favicon.ico">
+  <link rel='stylesheet' href='/static/css/code.css'>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <script src="/static/javascript/article.js"></script>
+  <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<style>
+.nav{
+  position:absolute;
+  top:43px;
+  right:233px;
+}
+.top{
+  position:absolute;
+  top:20px;
+  right:66.3px;
+}
+h1{
+  text-align:center
+}
+.sidebar {
+  position: fixed;
+  padding-left: 10px;
+
+  border-left: solid;
+  border-color: black;
+  border-width: 2px;
+}
+  div.showimg {
+    position: relative;
+    top: -45px;
+    left: 85px;
+    width: 25px;
+    height: 20px;
+  }
+
+  .avatarshow {
+    width: 65px;
+    height: 65px;
+  }
+  .showcover {
+  float: left;
+  width: 200px;
+  height: 150px;
+  margin: 5px;
+}
+  .carousel-inner img {
+    width: 100%;
+  }
+</style>
+<body>
+  <div style="background:url(/static/image/homebg.jpg)">
+    <br>
+    <div>
+      <nav>
+        <div class="row">
+          <font color='white' size='7px'>&thinsp;&thinsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Xiao Tan</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <font color='white' size='4px'>Practice curves is always <b>e<sup>x</sup></b></font>
+          <div class="top">
+            {% if request.user.is_authenticated %}
+            <ul class='navbar'>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <font color='#337ab7' size='3px'><b>{{user.username}}</b></font>
+                  <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href='/logout'>logout</a>
+                  </li>
+                  <li>
+                    <a href='/users?username={{request.user.username}}'>your imformation</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            <div class='showimg'>
+              <img class='avatarshow img-circle' src='{{request.user.profile.avatar.url}}' ,alt='{{request.user.profile.phone}}'>
+            </div>
+            {% else %}
+            <ul class='navbar'>
+              <li class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                  <font color='white' size='3px'><b>Welcome!&nbsp;&nbsp;guy!</b></font>
+                  <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a href='/login?next={{request.path}}'>login</a>
+                  </li>
+                  <li>
+                    <a href='/register'>register</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+            {% endif %}
+          </div>
+              <ul class="nav nav-pills">
+                <li><a href="/"><b style='font-size:18px'>Home</b></a></li>
+                <li class='active'><a href="/blog"><b style='font-size:18px'>Blog</b></a></li>
+                <li><a href="https://github.com/tx19980520"><b style='font-size:18px'>GitHub</b></a></li>
+                <li><a href="/about"><b style='font-size:18px'>About</b></a></li>
+                <li><a href='/heartbeats'><b style='font-size:18px'>Heart Beats</b></a></li>
+              </ul>
+            </div>
+          </div>
+      </nav>
+      <br>
+      <p class='text-center'>
+        <label class='text-center'><font color='white' size='4px'>For more Technology</font></label><br>
+        <label class="text-center"><font color='white' size='4px'>Technical otaku save the world</font></label>
+      </p>
+      </div>
+    </div>
+  </div>
+    <div class='col-md-1'></div>
+<div class='col-md-8 panel panel-default'>
+  <div class="panel-body">
+    <h1 id="spfascc">三个算法的简介——SPFA，SCC，匈牙利算法</h1>
+<p>所有的代码均可用，放在了本人的github中，链接放在下方：</p>
+<p>https://github.com/tx19980520/Implement-the-algorithm-with-c--</p>
+<h2 id="spfa">SPFA</h2>
+<p>在我们的有向图单源最短路径的问题中，我们基础的是可以使用dijstra算法得到答案，但是dijkstra算法不能解决负权环问题和，甚至连拥有负权都不能保证得到正确答案（部分不影响选择的绝对值相对很小的负权是没有问题的）。这个时候我们会想到替代的方法，我们首先会想到Floyd算法，能包容负权，在一定程度上的改造还能判断负权环的存在（对角线上的值可以改变，对角线表示自己到自己的距离，结果发现有一个负数，则肯定有负环。），但这时间的代价是输入的三次方，这是非常大的，因而我们在这里讲SPFA算法并加上了SLF的优化。</p>
+<p>SPFA分为DFS和BFS，从判断负权环的角度，DFS在判断负环上是不稳定的，我们这个地方讲的方法是BFS。</p>
+<p>在这个地方我们需要的数据结构有：</p>
+<p>1.一个队列（SLF优化需要双向队列deque）</p>
+<p>2.一个邻接矩阵或者一个邻接表来表示图的基本信息（源代码中我单独还写了一个final来储存源点到各点的距离）</p>
+<p>3.一个now_in[]，记录现在是否在队列中，在入队出队的时候记得记录</p>
+<p>放入队列是什么，是我们图中的点的序号，什么样的点能够进入队列呢：</p>
+<p>1.能使得源点到某个某个其他的点的距离减少</p>
+<p>2.你本来就不在队列里面（使用now_in判断）</p>
+<p>满足这两点即可入队。</p>
+<p>我们的在数据预处理之后，我们的主要部分为一个不断出队入队，最后整个程序只有两个出口，第一，我们的队列里面没有元素了，整个图处理完毕，输出答案就可以结束了。第二，其中存在负权环。</p>
+<p>负权环怎么判断，只要有一个点入队n次，那就一定有负权环。这个道理我们简单的理解下，如果有一个环，你在里面跑了一圈，最后你的路径大小变小了，那从贪心的角度来讲，那我肯定愿意在这个环里面无穷的走下去，那肯定其中环内的各个点会被遍历无穷次，实际上我们说限制为入队n次，你只要找一个比n大的数都可以，只是时间上并不是最优的。</p>
+<h2 id="scc">scc</h2>
+<p>SCC(strongly connected component)强连通子图，基本的意思是在于遍历一个图，得到各个强连通分量，我们先解释一下什么叫强连通分量，即一个子图（树），在这个子图（树）当中，任意找两个点，他们都可以找到一条路，使两者连通。我们这个地方只讲tarjan算法和kosaraju算法。</p>
+<h3 id="tarjan">tarjan算法</h3>
+<p>该算法要求的数据结构：</p>
+<p>1.stack一个，作为一个全局变量</p>
+<p>2.一个邻接表或者邻接矩阵，用于储存图的基本信息</p>
+<p>3.step[]储存遍历到某点的步数</p>
+<p>4.deep[]储存你和你子树中能找到的最小的deep，如果没有，则deep[i] = step[i]（这是明显的递归定义）</p>
+<p>这个地方强调一下，我们的step是遍历顺序定的，不会被更改，只有deep会被改变。</p>
+<p>第四点已经非常明显的告诉我们这个算法是递归实现的，他的基础是DFS，我们的在每一个层次上要做的事情为</p>
+<p>1.确立好你的step[i]，初始化deep[i] = step[i]，将该点入栈。</p>
+<p>2.开始遍历你的子树，并通过他们的deep的改变来改变自己的deep，deep为子树和你自己本身最小的。</p>
+<p>3.如果在2之后还是发现deep[i] == step[i]，进行栈的pop</p>
+<p>PS：这个地方要注意到一个问题，可能图中有点没有被访问到（甚至有森林的可能），这一定要注意保证每个点都被visit到，当一次dfs退出之后，一定要记得检查visit数组里面还有没有值为0，如果有就以之开始下一次dfs，知道全图被完全遍历。</p>
+<p>我们来具体说一下这个出栈的问题，这里贴一段代码：</p>
+<div class="codehilite"><pre><span></span>  <span class="k">if</span><span class="p">(</span><span class="n">deep</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">==</span> <span class="n">step</span><span class="p">[</span><span class="n">index</span><span class="p">])</span><span class="c1">//根据画图的得到的经验是，pop到该元素出栈为止</span>
+  <span class="p">{</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span> <span class="s">&quot;a strongly connected component:&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">top</span><span class="p">()</span> <span class="o">!=</span> <span class="n">index</span><span class="p">)</span>
+    <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">tmp</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;  &quot;</span><span class="p">;</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+        <span class="n">had_in</span><span class="p">[</span><span class="n">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">now_in</span><span class="p">[</span><span class="n">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kt">int</span> <span class="n">tmp</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">tmp</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;  &quot;</span><span class="p">;</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+    <span class="n">had_in</span><span class="p">[</span><span class="n">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">now_in</span><span class="p">[</span><span class="n">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+</pre></div>
+
+
+<p>我们退栈只会在<code>deep[index] == step[index]</code>被调用，入栈只会在递归最开始的时候，退栈退到什么程度呢，退到栈顶是该元素，然后再退一次栈（pop该index），则你前面pop的一切的点，就组成了一个强连通分量。</p>
+<h3 id="kosaraju">kosaraju算法</h3>
+<p>该算法据说栈可能炸，我们的栈空间需求稳定的需要n，但我们的tarjan中间可以看到，我们中途可以弹栈，所以栈的最坏情况（整个图是强联通的）才是n，但这个方法的理解很简单。</p>
+<p>该算法需要的数据结构：</p>
+<p>1.一个全局栈，所有点都需要进栈，栈底的元素最先被遍历，该图的遍历是后序遍历（子树优先）。</p>
+<p>2.一个visit数组，这个数组需要用到两次，记录是否被遍历，两次中间需要重新初始化。</p>
+<p>3.deep[]，用于记录dfs的次序。</p>
+<p>首先随机找一个点开始进行dfs（我的算法里面提供的是对visit数组顺序遍历，如果没有被visit，就开始对其dfs，dfs过程中会改变visit数组中的值）</p>
+<p>说有点都进栈之后，我再一次初始化了我的visit数组，为了接下来的dfs做准备。</p>
+<p>所有点都进栈之后，从栈顶的点开始DFS，同样的，DFS过程将改变visit数组的值，被遍历过的点i,visit[i] = 1，当一个点DFS进行完毕或者其visit数组中对应的值在遍历前已经为一，则弹栈。这一小部分的代码如下：</p>
+<div class="codehilite"><pre><span></span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="n">scc</span> <span class="c1">//用于记录每一个强连通子图，方便在后期输出</span>
+<span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">s</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="c1">//栈空则退出该循环</span>
+  <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">visit</span><span class="p">[</span><span class="n">top</span><span class="p">]</span> <span class="o">==</span><span class="mi">1</span><span class="p">)</span><span class="c1">//如果该点已经被遍历过，则直接弹栈，回到循环头</span>
+    <span class="p">{</span>
+      <span class="n">s</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+      <span class="n">top</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+      <span class="k">continue</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">redfs</span><span class="p">(</span><span class="n">top</span><span class="p">);</span>
+    <span class="n">cout</span><span class="o">&lt;&lt;</span> <span class="s">&quot;There is an scc:&quot;</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">scc</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">{</span>
+      <span class="n">cout</span><span class="o">&lt;&lt;</span> <span class="n">scc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">&lt;&lt;</span><span class="s">&quot; &quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">scc</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">s</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+  <span class="p">}</span>
+</pre></div>
+
+
+<h2 id="_1">匈牙利算法</h2>
+<p>匈牙利算法是一个匹配问题，基本的问题阐述为，有AB两个集合，A中的元素和B中的部分（可能是全部）元素之间有联系，问最多能匹配出多少组有联系。</p>
+<p>这个问题主要是得到最后的匹配个数，因为可能匹配的最终具体结果可能有变化，想要得出所有解的话一定是一个n！复杂度的东西（在找到最大答案之后得回溯）。</p>
+<p>这个算法的实现的本质是‘“以后为重，先满足后面元素”。是一个不断扩展和改变子解的过程。我们以A集合的元素来看这个问题，则问题①A中n个元素匹配B中n个元素的最大匹配度求解 的子问题是 问题②A中n-1个元素匹配B中n个元素的最大匹配度求解。</p>
+<p>如何理解先满足后面的元素，即如果A中的后面元素a想与B中元素b配对，如果元素b之前没有进行过配对，则直接配对，进行下一个问题；如果元素b之前已经是和a'配对了，则a'取消与b配对，另寻其他元素，这个过程一直重复，最后该问题解决。我们对父问题继续求解。</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+{% if hascomment %}
+<p><font size="5px;">Comments</font></p>
+{% for com in comments %}
+<p><font>{{forloop.counter}}
+{{com.0.author}} &nbsp;&nbsp;&nbsp;&nbsp;<button class="btn btn-default" onclick="reply({{forloop.counter}})">reply</button>
+</p>
+<img src="{{com.1}}" class="avatarshow img-circle" style="position:relative;float:left;">
+<p style="margin-left:75px;"><font size="3x;">{{com.0.content}}</font></p>
+<br>
+<br>
+<time style="float:left;">{{com.0.timestamp}}</time>
+<hr style="height:2px;border:none;border-top:2px;background-color:black;">
+{% endfor %}
+{% endif %}
+<form action="" method='post'>
+{% csrf_token %}
+<div class='form-group'><label><font size='3px'>comment</font></label>
+<textarea type='text' id="editcomment" name='editcomment' onblur="checkcomment()" class='form-control' rows="3" required></textarea><br>
+</div>
+<p class='text-center'>
+  {% if request.user.is_authenticated %}
+  <button type="submit" value="submit" class='btn btn-default'>comment</button>
+  {% else %}
+  <p class="text-center"><font size="3px">If you wanna post,login first!</font></p>
+  {% endif %}
+</p>
+</form></div></div>
+<div class="col-md-3">
+  <aside>
+    <div class="sidebar">
+      <font size='2.5px'>
+          <font size='4px'>Others the author has</font>
+        </p>
+        {% for link in links %}
+        <p>
+          <a href='/detail/{{link.Article_id}}'>
+            {{link.title}}</a>
+        </p>
+        {% endfor %}
+        </font>
+      </font>
+    </div>
+  </aside>
+</div>
+</body>
+</html>
