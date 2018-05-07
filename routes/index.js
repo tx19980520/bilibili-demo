@@ -4,10 +4,53 @@ var mongoose =require(".././config/mongoose.js");
 var db = mongoose();
 var Anime = require('../models/Anime.js');// 引入模型
 var Online = require('../models/Online.js');
+var request = require('request');
 var AnimeSpecific = require('../models/animeSpecific.js');
+	api.all('*', function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    res.header("X-Powered-By",' 3.2.1')
+    res.header("Content-Type", "application/json;charset=utf-8");
+    if (req.method == 'OPTIONS') {
+    res.sendStatus(200); // 让options请求快速返回
+  }
+  else {
+    next();
+  }
+});
+
 	api.post("/api/postRecommend",function(req,res){
-		console.log(req.body);
-		res.json({code:200,text:"get"});
+		let animelist = req.body.animelist;
+		let url = "http://localhost:8000/postRecommend"
+		request({
+			url: url,
+			method: "POST",
+			json: true,
+			headers: {
+				"content-type": "application/json",
+				"Accept":"application/json"
+			},
+			body: JSON.stringify(req.body)
+		}, function(error, response, body) {
+			if (!error && response.statusCode == 200) {
+				let rjs = JSON.parse(body)
+				res.json({code:200,animelist:rjs})
+			}
+		}); 
+		/*
+		let options = {
+			mode: 'cors',
+			body:JSON.stringify({'animelist':animelist}),
+			headers:{
+                'Accept':"application/json",
+                'Content-Type': 'application/json;charset=utf-8',
+            }
+		}
+		fetch(`http://localhost:8000/api/pythonRecommend`,options).then(response => {
+			JSON.parse(response)
+		}).then(rjs => {res.json({code:200,text:rjs});})
+		*/
 	});
     api.get("/api/AnimeSpecific/:animeId",function(req,res){
         let animeId = req.params.animeId;
