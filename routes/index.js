@@ -27,12 +27,11 @@ async function handlResult(arr)
 }
 async function handleCallback(arr)
 {
-	console.log(arr)
 	return JSON.parse(arr)
 }	
 
 	api.post("/api/postRecommend", function(req,res){
-		let animelist = req.body;
+		let animelist = req.body.animelist;
 		Anime.find({"animeTitle":{"$in":animelist}},"_id", (err, result) => {
 			handlResult(result).then( arr => {
 				console.log(arr)
