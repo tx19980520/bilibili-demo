@@ -19,25 +19,48 @@ var AnimeSpecific = require('../models/animeSpecific.js');
     next();
   }
 });
+async function handlResult(arr)
+{
+	return arr.map( item => {
+		return item._id+"";
+	})
+}
+async function handleCallback(arr)
+{
+	console.log(arr)
+	return JSON.parse(arr)
+}	
 
-	api.post("/api/postRecommend",function(req,res){
-		let animelist = req.body.animelist;
-		let url = "http://localhost:8000/postRecommend"
-		request({
-			url: url,
-			method: "POST",
-			json: true,
-			headers: {
-				"content-type": "application/json",
-				"Accept":"application/json"
-			},
-			body: JSON.stringify(req.body)
-		}, function(error, response, body) {
-			if (!error && response.statusCode == 200) {
-				let rjs = JSON.parse(body)
-				res.json({code:200,animelist:rjs})
-			}
-		}); 
+	api.post("/api/postRecommend", function(req,res){
+		let animelist = req.body;
+		Anime.find({"animeTitle":{"$in":animelist}},"_id", (err, result) => {
+			handlResult(result).then( arr => {
+				console.log(arr)
+				let url = "http://localhost:8000/postRecommend"
+				request({
+					url: url,
+					method: "POST",
+					json: true,
+					headers: {
+						"content-type": "application/json",
+						"Accept":"application/json"
+					},
+					body: JSON.stringify(arr)
+				}, function(error, response, body) {
+					if (!error && response.statusCode == 200) {
+						handleCallback(body).then(recommends =>{
+							Anime.find({_id:{"$in":recommends}}, (err,result) => {
+								if (err){res.json({code:201,text:err});}
+								else{
+									res.json({code:200,animelist:result})
+								}
+							})
+						})
+					}
+				});
+			})
+		}) 
+		
 		/*
 		let options = {
 			mode: 'cors',
