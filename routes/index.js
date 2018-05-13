@@ -1,11 +1,12 @@
 var express = require('express');
 var api = express.Router();
-var mongoose =require(".././config/mongoose.js");
+var mongoose =require("../config/mongoose.js");
 var db = mongoose();
 var Anime = require('../models/Anime.js');// 引入模型
 var Online = require('../models/Online.js');
 var request = require('request');
 var AnimeSpecific = require('../models/animeSpecific.js');
+var FeedBack = require("../models/FeedBack.js");
 	api.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Content-Type");
@@ -22,14 +23,32 @@ var AnimeSpecific = require('../models/animeSpecific.js');
 async function handlResult(arr)
 {
 	return arr.map( item => {
-		return item._id+"";
+		return `${item._id}`;
 	})
 }
 async function handleCallback(arr)
 {
 	return JSON.parse(arr)
-}	
-
+}
+	api.get("api/getExtensionData", function(req,res){
+		FeedBack.Find({merge:false},(err, result) => {
+			if(!err)res.json({code:200, FeedBackData:result})
+		})
+	})
+	api.post("api/merge", function(req, res){
+		/* check the password and merge some data */
+		
+	})
+	
+	api.post("/api/postFeedBack", function(req,res){
+		let body = req.body
+		let doc = {body..., date:new Date(), merge:false}
+		FeedBack.create(doc, function(err, docs){
+			if(err) console.log(err);
+		console.log('保存成功：' + docs);
+		});
+	})
+	
 	api.post("/api/postRecommend", function(req,res){
 		let animelist = req.body.animelist;
 		Anime.find({"animeTitle":{"$in":animelist}},"_id", (err, result) => {
