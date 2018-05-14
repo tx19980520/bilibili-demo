@@ -51,11 +51,7 @@ module.exports = ()=>{
             if (err) console.log(err);
             console.log('The author is %s', user.likevideo[0]);
         });*/
-        Anime.findOne({_id:2661}).populate('animeSpecific').exec(function (err, anime) {
-            if (err) console.log(err);
-            console.log('The author is %s', anime.animeSpecific);
-        });
-
+		console.log("All right!")
         return db;
     });
 };

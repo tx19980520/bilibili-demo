@@ -2,11 +2,13 @@ var express = require('express');
 var api = express.Router();
 var mongoose =require("../config/mongoose.js");
 var db = mongoose();
+
 var Anime = require('../models/Anime.js');// 引入模型
 var Online = require('../models/Online.js');
 var request = require('request');
 var AnimeSpecific = require('../models/animeSpecific.js');
-var FeedBack = require("../models/FeedBack.js");
+var Feedback = require('../models/feedback.js');
+
 	api.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Content-Type");
@@ -30,28 +32,32 @@ async function handleCallback(arr)
 {
 	return JSON.parse(arr)
 }
-	api.get("api/getExtensionData", function(req,res){
-		FeedBack.Find({merge:false},(err, result) => {
-			if(!err)res.json({code:200, FeedBackData:result})
+	api.get("api/getExtensionData", (req, res) => {
+		Feedback.Find({"merge":false},(err, result) => {
+			if(!err)res.json({code:200, FeedbackData:result})
+			else{res.json({code:201, FeedbackData:[]})}
 		})
 	})
-	api.post("api/merge", function(req, res){
-		/* check the password and merge some data */
-		
+	api.post("api/merge", (req, res) => {
+		/*to do(check the session)*/
+		Feedback.updateMany({_id: {"$in":req.body.keys}}, {merge: true}, {multi: true}, (err, docs) => {
+			if (err) console.log(err);
+			console.log('更改成功：' + docs);
+		})
 	})
 	
-	api.post("/api/postFeedBack", function(req,res){
+	api.post("/api/postFeedBack", (req, res) => {
 		let body = req.body
-		let doc = {body..., date:new Date(), merge:false}
-		FeedBack.create(doc, function(err, docs){
-			if(err) console.log(err);
-		console.log('保存成功：' + docs);
-		});
+		Feedback.count({}, (err,result) => {
+			let doc = {body..., date:new Date(), merge:false}
+			let fb = new Feedback(doc);
+			fb.save();
+		})
 	})
 	
-	api.post("/api/postRecommend", function(req,res){
+	api.post("/api/postRecommend", (req, res) => {
 		let animelist = req.body.animelist;
-		Anime.find({"animeTitle":{"$in":animelist}},"_id", (err, result) => {
+		Anime.find({"animeTitle":{"$in":animelist}}, "_id", (err, result) => {
 			handlResult(result).then( arr => {
 				console.log(arr)
 				let url = "http://localhost:8000/postRecommend"
@@ -64,13 +70,13 @@ async function handleCallback(arr)
 						"Accept":"application/json"
 					},
 					body: JSON.stringify(arr)
-				}, function(error, response, body) {
+				}, (error, response, body) => {
 					if (!error && response.statusCode == 200) {
-						handleCallback(body).then(recommends =>{
-							Anime.find({_id:{"$in":recommends}}, (err,result) => {
-								if (err){res.json({code:201,text:err});}
+						handleCallback(body).then(recommends => {
+							Anime.find({_id:{"$in":recommends}}, (err, result) => {
+								if (err){res.json({code:201, text:err});}
 								else{
-									res.json({code:200,animelist:result})
+									res.json({code:200, animelist:result})
 								}
 							})
 						})
@@ -93,37 +99,37 @@ async function handleCallback(arr)
 		}).then(rjs => {res.json({code:200,text:rjs});})
 		*/
 	});
-    api.get("/api/AnimeSpecific/:animeId",function(req,res){
+    api.get("/api/AnimeSpecific/:animeId", (req, res) => {
         let animeId = req.params.animeId;
-        Anime.findOne({_id:animeId}).populate('animeSpecific').exec(function (err, anime) {
+        Anime.findOne({_id:animeId}).populate('animeSpecific').exec((err, anime) => {
             if (err) console.log(err);
             else {
-                res.json({"cover":anime.animePicturePath[0],"animeTitle":anime.animeTitle,"specific":anime.animeSpecific});
+                res.json({"cover":anime.animePicturePath[0], "animeTitle":anime.animeTitle, "specific":anime.animeSpecific});
             }
         });
         });
-    api.get('/api/getPage',function(req, res) {
-        Anime.count({},(err,result)=>{
-            if(err)return{code:201,text:"返回页数失败"};
+    api.get('/api/getPage', (req, res) => {
+        Anime.count({}, (err,result) => {
+            if (err) return{code:201, text:"返回页数失败"};
             else{
-                let num=Math.ceil(result/20);
+                let num = Math.ceil(result / 20);
                 res.json({
-                    code:200,
-                    pages:num
+                    code: 200,
+                    pages: num
                 })
             }
         })
     });
-    api.get("/api/getSearchPage",function(req, res) {
-        if(!req.query.word)
+    api.get("/api/getSearchPage", (req, res) => {
+        if (!req.query.word)
         {
             //todo 返回一个所谓的推荐队列
         }
         else{
             let word = req.query.word;
-            Anime.count({animeTitle:{$regex:".*"+word+".*","$options":"i"}},function(err, result) {
-                if(err) res.json({code:201,text:error});
-                else if(result.length === 0)
+            Anime.count({animeTitle:{$regex:".*"+word+".*","$options":"i"}}, (err, result) => {
+                if (err) res.json({code:201, text:error});
+                else if (result.length === 0)
                 {
                     res.json({code:304})
                 }
@@ -134,7 +140,7 @@ async function handleCallback(arr)
             })
         }
     });
-    api.get('/',function(req, res) {
+    api.get('/', (req, res) => {
         /*let anime = new Anime({
             animeTitle: "ty0207",
             fans:123214,
@@ -143,13 +149,13 @@ async function handleCallback(arr)
         })
         anime.save()*/
     });
-    api.get("/api/getOnlineData", function (req, res) {
+    api.get("/api/getOnlineData", (req, res) => {
         let date =new Date();
         let today = date.getDate();
         let nowmonth = date.getMonth()+1;
         let nowYear = date.getFullYear();
-        Online.find({date:today,month:nowmonth,year:nowYear},(err,result)=>{
-            if(err || result.length === 0) res.json({code:201,text:err})
+        Online.find({date:today,month:nowmonth, year:nowYear}, (err, result) => {
+            if (err || result.length === 0) res.json({code:201, text:err})
             else{
                 let dataPoints = result[0]
                 let total = {
@@ -164,17 +170,17 @@ async function handleCallback(arr)
         })
 
     });
-    api.get("/api/search",function(req,res){
-        if(!req.query.word)
+    api.get("/api/search", (req, res) => {
+        if (!req.query.word)
         {
             //todo
         }
         else
         {
             let word = req.query.word;
-            Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},(err,result)=>{
-                if(err){res.json({code:201,text:err});}
-                else if(result.length === 0) {res.json({code:202,text:"没有您需要的资料"});}
+            Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}}, (err, result) => {
+                if (err) {res.json({code:201, text:err});}
+                else if (result.length === 0) {res.json({code:202,text:"没有您需要的资料"});}
                 else{
                     let total={
                         code:200,
@@ -185,15 +191,15 @@ async function handleCallback(arr)
             })
         }
     });
-    api.get('/api/getSearchList', function (req, res) {
+    api.get('/api/getSearchList', (req, res) => {
         //这个地方后面会做成实时的一个反馈，但是现在是整个返回
         //并且现在暂时只有一个番剧的搜索
-        if(!req.query.word)
+        if (!req.query.word)
         {
-            Anime.find({},(err,result)=>{
-                if(err) res.json({code:201,text:err})
+            Anime.find({},(err, result) => {
+                if (err) res.json({code:201, text:err})
                 else{
-                    let tmp = result.map((anime)=>{
+                    let tmp = result.map((anime) => {
                         return anime.animeTitle
                     });
                     let nameList = Array.from(new Set(tmp))
@@ -205,19 +211,19 @@ async function handleCallback(arr)
                 }
             });
         }
-		else if(!req.query.page){
+		else if (!req.query.page){
 			let word = req.query.word;
-            Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},(err,result)=>{
-                if(err) res.json({code:201,text:err})
+            Anime.find({animeTitle:{$regex:".*"+word+".*", "$options":"i"}}, (err, result) => {
+                if (err) res.json({code:201, text:err})
                 else{
-                    let tmp = result.map((anime)=>{
+                    let tmp = result.map((anime) => {
                         return anime.animeTitle
                     });
 					console.log(tmp)
                     let nameList = Array.from(new Set(tmp))
                     let re = {
-                        code:200,
-                        searchlist:nameList
+                        code: 200,
+                        searchlist: nameList
 						}
                     res.json(re)
                 }
@@ -228,31 +234,31 @@ async function handleCallback(arr)
             let word = req.query.word;
 			let page = req.query.page;
             Anime.find({animeTitle:{$regex:".*"+word+".*","$options":"i"}},(err,result)=>{
-                if(err) res.json({code:201,text:err})
+                if (err) res.json({code:201,text:err})
                 else{
                     let tmp = result.map((anime)=>{
                         return anime.animeTitle
                     });
                     let nameList = Array.from(new Set(tmp))
                     let re = {
-                        code:200,
-                        searchList:nameList.slice((page-1)*20,page*20),
-						animeList:result.slice((page-1)*20,page*20),
-						totalPage:Math.ceil(nameList.length/20)
+                        code: 200,
+                        searchList: nameList.slice((page - 1) * 20,page * 20),
+						animeList: result.slice((page - 1) * 20,page * 20),
+						totalPage: Math.ceil(nameList.length / 20)
 						}
                     res.json(re)
                 }
             });
         }
     });
-    api.get('/api/getAnime', function (req, res) {
+    api.get('/api/getAnime', (req, res) => {
         if(!req.query.page){
-            Anime.find({},(err,result)=>{
-                if(err)  res.json({code:201,text:err});
+            Anime.find({}, (err, result) => {
+                if(err)  res.json({code:201, text:err});
                 else{
                     let total = {
-                        code:200,
-                        list:result.slice(0,20)
+                        code: 200,
+                        list: result.slice(0,20)
                     };
                     res.json(total);
                 }
@@ -260,15 +266,14 @@ async function handleCallback(arr)
         }
         else{//代表有页数
             page = req.query.page;
-            Anime.find({},(error,result)=>{
-                if(error)
-                {
-                    res.json({code:201,text:"无法查找数据"})
+            Anime.find({}, (error, result) => {
+                if (error){
+                    res.json({code:201, text:"无法查找数据"})
                 }
                 else{
                     let total = {
-                        code:200,
-                        list:result.slice((page-1)*20,page*20)
+                        code: 200,
+                        list: result.slice((page - 1) * 20, page * 20)
                     };
                     res.json(total);
                 }
