@@ -6,7 +6,7 @@ var feedbackSchema = new Schema({
     date: Date,
 	origin: [{type:Number, ref:"Anime"}],
 	recommend: [{type:Number, ref:"Anime"}],
-	score: {type:Array,default:[]}
+	score: {type:Array,default:[]},
 	merge: {type:Boolean,default:false}
 });
 module.exports = feedbackSchema;

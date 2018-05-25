@@ -15,7 +15,7 @@ var Feedback = require('../models/feedback.js');
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
     res.header("X-Powered-By",' 3.2.1')
     res.header("Content-Type", "application/json;charset=utf-8");
-    if (req.method == 'OPTIONS') {
+    if (req.method === 'OPTIONS') {
     res.sendStatus(200); // 让options请求快速返回
   }
   else {
@@ -49,14 +49,22 @@ async function handleCallback(arr)
 	api.post("/api/postFeedBack", (req, res) => {
 		let body = req.body
 		Feedback.count({}, (err,result) => {
-			let doc = {body..., date:new Date(), merge:false}
+			let doc = {...body , date:new Date(), merge:false}
 			let fb = new Feedback(doc);
 			fb.save();
 		})
 	})
 	
 	api.post("/api/postRecommend", (req, res) => {
-		let animelist = req.body.animelist;
+
+	    let animelist = req.body.animelist;
+	    //for test easy
+        Anime.find({"animeTitle":{"$in":animelist}}, (err, result) => {
+            console.log("here")
+            console.log(result)
+            res.json({code:200, animelist:result})
+        })
+        /*
 		Anime.find({"animeTitle":{"$in":animelist}}, "_id", (err, result) => {
 			handlResult(result).then( arr => {
 				console.log(arr)
@@ -71,7 +79,7 @@ async function handleCallback(arr)
 					},
 					body: JSON.stringify(arr)
 				}, (error, response, body) => {
-					if (!error && response.statusCode == 200) {
+					if (!error && response.statusCode === 200) {
 						handleCallback(body).then(recommends => {
 							Anime.find({_id:{"$in":recommends}}, (err, result) => {
 								if (err){res.json({code:201, text:err});}
@@ -83,7 +91,7 @@ async function handleCallback(arr)
 					}
 				});
 			})
-		}) 
+		}) */
 		
 		/*
 		let options = {
