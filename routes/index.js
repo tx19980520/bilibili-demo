@@ -48,10 +48,12 @@ async function handleCallback(arr)
 	
 	api.post("/api/postFeedBack", (req, res) => {
 		let body = req.body
-		Feedback.count({}, (err,result) => {
-			let doc = {...body , date:new Date(), merge:false}
+        console.log(body)
+		 Feedback.count({}, (err,result) => {
+			let doc = {animeList:body , date:new Date(), merge:false,_id:result}
 			let fb = new Feedback(doc);
 			fb.save();
+			res.json({code:200})
 		})
 	})
 	
