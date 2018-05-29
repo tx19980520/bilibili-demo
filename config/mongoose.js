@@ -51,7 +51,6 @@ module.exports = ()=>{
             if (err) console.log(err);
             console.log('The author is %s', user.likevideo[0]);
         });*/
-		console.log("All right!")
         return db;
     });
 };

@@ -6,10 +6,8 @@ var db = mongoose();
 var Anime = require('../models/Anime.js');// 引入模型
 var Online = require('../models/Online.js');
 var request = require('request');
-var AnimeSpecific = require('../models/animeSpecific.js');
 var Feedback = require('../models/feedback.js');
-
-	api.all('*', function(req, res, next) {
+api.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Content-Type");
     res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
@@ -32,25 +30,52 @@ async function handleCallback(arr)
 {
 	return JSON.parse(arr)
 }
-	api.get("api/getExtensionData", (req, res) => {
-		Feedback.Find({"merge":false},(err, result) => {
-			if(!err)res.json({code:200, FeedbackData:result})
-			else{res.json({code:201, FeedbackData:[]})}
-		})
+	api.get("/api/getFeedback", (req, res) => {
+        if (req.query.merge === "true")
+        {
+            Feedback.find({'merge':true},(err, result) => {
+                if(!err)res.json({code:200, feedbackData:result})
+                else{res.json({code:201, feedbackData:[]})}
+            })
+        }
+        else if (req.query.merge === "false"){
+            Feedback.find({'merge':false},(err, result) => {
+                console.log(result)
+                if(!err)res.json({code:200, feedbackData:result})
+                else{res.json({code:201, feedbackData:[]})}
+            })
+        }
+        else{
+            Feedback.find({},(err, result) => {
+                if(!err)res.json({code:200, feedbackData:result})
+                else{res.json({code:201, feedbackData:[]})}
+            })
+        }
 	})
-	api.post("api/merge", (req, res) => {
+
+	api.post("/api/merge", (req, res) => {
 		/*to do(check the session)*/
-		Feedback.updateMany({_id: {"$in":req.body.keys}}, {merge: true}, {multi: true}, (err, docs) => {
-			if (err) console.log(err);
+		Feedback.updateMany({_id: {"$in":req.body.mergeList}}, {merge: true}, {multi: true}, (err, docs) => {
+			if (err) {console.log(err);res.json({code:404})};
 			console.log('更改成功：' + docs);
+			res.json({code:200})
 		})
 	})
+
+    api.post("api/delete", (req, res) => {
+        /*to do(check the session)*/
+        Feedback.remove({_id: {"$in": req.body.deleteList}}, (err) => {
+            if (err) {console.log(err);res.json({code: 404})};
+            console.log('删除成功：');
+            res.json({code:200})
+        })
+    })
 	
 	api.post("/api/postFeedBack", (req, res) => {
 		let body = req.body
         console.log(body)
 		 Feedback.count({}, (err,result) => {
-			let doc = {animeList:body , date:new Date(), merge:false,_id:result}
+			let doc = {animeList: body.postList, date: new Date(), merge: false, _id: result, recommendList: body.feedback}
 			let fb = new Feedback(doc);
 			fb.save();
 			res.json({code:200})
@@ -59,15 +84,13 @@ async function handleCallback(arr)
 	
 	api.post("/api/postRecommend", (req, res) => {
 
-	    let animelist = req.body.animelist;
+	    let animeList = req.body.animelist;
 	    //for test easy
-        Anime.find({"animeTitle":{"$in":animelist}}, (err, result) => {
-            console.log("here")
-            console.log(result)
-            res.json({code:200, animelist:result})
+        Anime.find({"animeTitle":{"$in": animeList}}, (err, result) => {
+            res.json({code:200, recommendList:result})
         })
         /*
-		Anime.find({"animeTitle":{"$in":animelist}}, "_id", (err, result) => {
+		Anime.find({"animeTitle":{"$in":animeList}}, "_id", (err, result) => {
 			handlResult(result).then( arr => {
 				console.log(arr)
 				let url = "http://localhost:8000/postRecommend"
@@ -83,10 +106,10 @@ async function handleCallback(arr)
 				}, (error, response, body) => {
 					if (!error && response.statusCode === 200) {
 						handleCallback(body).then(recommends => {
-							Anime.find({_id:{"$in":recommends}}, (err, result) => {
+							Anime.find({_id:{"$in":recommends}}, (err, recommendResult) => {
 								if (err){res.json({code:201, text:err});}
 								else{
-									res.json({code:200, animelist:result})
+									    res.json({code:200, recommendList: recommendResult})
 								}
 							})
 						})
@@ -109,6 +132,7 @@ async function handleCallback(arr)
 		}).then(rjs => {res.json({code:200,text:rjs});})
 		*/
 	});
+
     api.get("/api/AnimeSpecific/:animeId", (req, res) => {
         let animeId = req.params.animeId;
         Anime.findOne({_id:animeId}).populate('animeSpecific').exec((err, anime) => {
@@ -130,6 +154,7 @@ async function handleCallback(arr)
             }
         })
     });
+
     api.get("/api/getSearchPage", (req, res) => {
         if (!req.query.word)
         {
@@ -150,6 +175,7 @@ async function handleCallback(arr)
             })
         }
     });
+
     api.get('/', (req, res) => {
         /*let anime = new Anime({
             animeTitle: "ty0207",
@@ -159,6 +185,7 @@ async function handleCallback(arr)
         })
         anime.save()*/
     });
+
     api.get("/api/getOnlineData", (req, res) => {
         let date =new Date();
         let today = date.getDate();
@@ -180,6 +207,7 @@ async function handleCallback(arr)
         })
 
     });
+
     api.get("/api/search", (req, res) => {
         if (!req.query.word)
         {
@@ -201,6 +229,7 @@ async function handleCallback(arr)
             })
         }
     });
+
     api.get('/api/getSearchList', (req, res) => {
         //这个地方后面会做成实时的一个反馈，但是现在是整个返回
         //并且现在暂时只有一个番剧的搜索
@@ -261,6 +290,7 @@ async function handleCallback(arr)
             });
         }
     });
+
     api.get('/api/getAnime', (req, res) => {
         if(!req.query.page){
             Anime.find({}, (err, result) => {

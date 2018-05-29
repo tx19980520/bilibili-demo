@@ -1,4 +1,5 @@
 var express = require('express');
+var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -47,7 +48,6 @@ var debug = require('debug')('my-application'); // debug模块
 var server = app.listen(8080, function () {
     var host = server.address().address;
     var port = server.address().port;
-	console.log("fuck");
 	debug('Express server listening on port ' + port);
     console.log('Example app listening at http://%s:%s', host, port);
 });

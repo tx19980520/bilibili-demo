@@ -5,6 +5,7 @@ var feedbackSchema = new Schema({
 	_id: Number,
     date: Date,
 	animeList: Array,
-	merge: {type:Boolean,default:false}
+    recommendList: Array,
+	merge: {type:Boolean,default:false},
 });
 module.exports = feedbackSchema;
