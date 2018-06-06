@@ -40,7 +40,6 @@ async function handleCallback(arr)
         }
         else if (req.query.merge === "false"){
             Feedback.find({'merge':false},(err, result) => {
-                console.log(result)
                 if(!err)res.json({code:200, feedbackData:result})
                 else{res.json({code:201, feedbackData:[]})}
             })
@@ -85,15 +84,18 @@ async function handleCallback(arr)
 	api.post("/api/postRecommend", (req, res) => {
 
 	    let animeList = req.body.animelist;
+	    console.log("animelist",animeList)
 	    //for test easy
-        Anime.find({"animeTitle":{"$in": animeList}}, (err, result) => {
+		
+        /*Anime.find({"animeTitle":{"$in": animeList}}, (err, result) => {
             res.json({code:200, recommendList:result})
-        })
-        /*
+        })*/
+        
+
 		Anime.find({"animeTitle":{"$in":animeList}}, "_id", (err, result) => {
 			handlResult(result).then( arr => {
 				console.log(arr)
-				let url = "http://localhost:8000/postRecommend"
+				let url = "http://localhost:9876/postRecommend"
 				request({
 					url: url,
 					method: "POST",
@@ -116,7 +118,7 @@ async function handleCallback(arr)
 					}
 				});
 			})
-		}) */
+		})
 		
 		/*
 		let options = {

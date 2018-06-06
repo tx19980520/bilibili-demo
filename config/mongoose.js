@@ -12,15 +12,16 @@ module.exports = ()=>{
     let db = mongoose.connection;
     db.on('error', console.error.bind(console, '连接错误：'));
     db.once('open', (callback) => {
-     /*   console.log('MongoDB连接成功！！');
+        console.log('MongoDB连接成功！！');
         //开始设计导入之前的数据
-
-        let fRead = fs.createReadStream("./scrapy_crawl/bilibili/bilibili/data/bilibili2.json");
+/*
+        let fRead = fs.createReadStream("./config/bilibili.json");
         const rl = readline.createInterface({
             input: fRead
         });
         rl.on('line', (line) => {
             //我们在这里进行文件
+            console.log(line)
             let data = JSON.parse(line);
             data['_id'] = parseInt(data['animeId']);
             data['animeSpecific'] = data['_id'];
@@ -30,7 +31,7 @@ module.exports = ()=>{
         rl.on('close', () => {
             console.log("番剧数据导入完成");
         });
-        let fReadspec = fs.createReadStream("./scrapy_crawl/bilibili/bilibili/data/specific2.json");
+        let fReadspec = fs.createReadStream("./config/specific_final.json");
         const rlspec = readline.createInterface({
             input: fReadspec
         });
@@ -43,7 +44,7 @@ module.exports = ()=>{
         });
         rlspec.on('close', () => {
             console.log("番剧番剧详情数据导入完成");
-        });*/
+        });
         //上述测试是成功的，下面代码的逻辑是没错的，错的是我们的主键的设定
 
         //下述代码没有问题
