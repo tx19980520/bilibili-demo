@@ -52,6 +52,27 @@ module.exports = ()=>{
             if (err) console.log(err);
             console.log('The author is %s', user.likevideo[0]);
         });*/
+        /*let fRead = fs.createReadStream("./config/episodes.json");
+        const rlepisodes = readline.createInterface({
+            input: fRead
+        });
+
+        rlepisodes.on('line', (line) => {
+            //我们在这里进行文件
+            let data = JSON.parse(line);
+            AnimeSpecific.findOne({_id: data["animeId"]}, (err, spec) => {
+                if (err) console.log(err);
+                else{
+                    spec.episodesPicture = data["coverpath"];
+                    spec.save();
+                }
+            })
+        });
+        rlepisodes.on('close', () => {
+            console.log("图片数据导入完成");
+        });
+        */
+
         return db;
     });
 };
