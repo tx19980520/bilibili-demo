@@ -10,7 +10,8 @@ var animeSpecificSchema = new Schema({
     episodes:Array,
     rating:Array,
     tags:Array,
-    animeId:Number
+    animeId:Number,
+    episodesPicture:{type:Array,default:[]}
 
 });
 module.exports = animeSpecificSchema;

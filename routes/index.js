@@ -95,7 +95,7 @@ async function handleCallback(arr)
 		Anime.find({"animeTitle":{"$in":animeList}}, "_id", (err, result) => {
 			handlResult(result).then( arr => {
 				console.log(arr)
-				let url = "http://localhost:9876/postRecommend"
+				let url = "http://106.15.225.249:9876/postRecommend"
 				request({
 					url: url,
 					method: "POST",
