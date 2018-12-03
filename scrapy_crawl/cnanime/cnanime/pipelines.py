@@ -7,7 +7,7 @@
 import scrapy
 from scrapy.pipelines.images import ImagesPipeline
 from scrapy.exceptions import DropItem
-import spiders.items as Items
+import cnanime.items as Items
 from scrapy.exporters import JsonLinesItemExporter
 
 #class BilibiliPipeline(object):
@@ -23,7 +23,7 @@ class bilibiliImagesPipeline(ImagesPipeline):
     def get_media_requests(self, item, info):
         if isinstance(item,Items.BilibiliItem):
             image_url = item['animePictureUrl']
-            print image_url
+            print (image_url)
             yield scrapy.Request(image_url)
     def item_completed(self, results, item, info):#这个放在后面
         if isinstance(item,Items.BilibiliItem):

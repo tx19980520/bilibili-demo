@@ -2,8 +2,7 @@
 import scrapy
 import json
 import time
-from items import BilibiliItem,animeSpecificItem;
-from pymongo import MongoClient
+from cnanime.items import BilibiliItem,animeSpecificItem;
 
 start_urls = []
 '''

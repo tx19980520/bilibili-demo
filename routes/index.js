@@ -95,7 +95,7 @@ async function handleCallback(arr)
 		Anime.find({"animeTitle":{"$in":animeList}}, "_id", (err, result) => {
 			handlResult(result).then( arr => {
 				console.log(arr)
-				let url = "http://106.15.225.249:9876/postRecommend"
+				let url = "http://localhost:9876/postRecommend"
 				request({
 					url: url,
 					method: "POST",
@@ -106,6 +106,7 @@ async function handleCallback(arr)
 					},
 					body: JSON.stringify(arr)
 				}, (error, response, body) => {
+					console.log(response)
 					if (!error && response.statusCode === 200) {
 						handleCallback(body).then(recommends => {
 							Anime.find({_id:{"$in":recommends}}, (err, recommendResult) => {

@@ -79,3 +79,4 @@ scrapy_crawl/allusers/allusers/data/*.json
 scrapy_crawl/sponsor/sponsor/data/*.json
 scrapy_crawl/cnanime/cnanime/data/*.json
 *.jpg
+*.npy

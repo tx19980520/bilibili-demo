@@ -7,10 +7,19 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var api = require('./routes/index');
 var users = require('./routes/users');
+var fs = require('fs');
+
 
 var app = express();
 
 
+var https = require('https');
+
+var privateKey  = fs.readFileSync("/etc/nginx/cqdulux.key", 'utf8');
+var certificate = fs.readFileSync("/etc/nginx/libilibi.cqdulux.cn_chain.crt", 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
+var httpsServer = https.createServer(credentials, app);
 
 // view engine setup
 //app.set('views', path.join(__dirname, 'views'));
@@ -45,6 +54,9 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 var debug = require('debug')('my-application'); // debug模块
+//app.listen(8080, function() {
+//    console.log('HTTPS Server is running on: https://localhost:%s', 8080);
+//});
 var server = app.listen(8080, function () {
     var host = server.address().address;
     var port = server.address().port;

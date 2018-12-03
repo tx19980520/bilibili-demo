@@ -2,9 +2,7 @@
 import scrapy
 import json
 import time
-from items import BilibiliItem,animeSpecificItem;
-from pymongo import MongoClient
-
+from bilibili.items import BilibiliItem, animeSpecificItem
 start_urls = []
 '''
 for bilibili specific and bilibili simple data;
@@ -29,7 +27,7 @@ class BilibiliSpider(scrapy.Spider):
             item['animeFinished'] = anime['is_finish']
             now = int(time.time())
             url = "https://bangumi.bilibili.com/jsonp/seasoninfo/%d.ver?callback=seasonListCallback&jsonp=jsonp&_=%d"%(int(item["animeId"].encode('utf-8')),now)
-            #yield item
+            yield item
             yield scrapy.Request(url,callback = self.sub_parse,meta={'id':int(item["animeId"].encode('utf-8'))})
 
     def sub_parse(self,response):
